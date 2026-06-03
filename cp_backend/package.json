@@ -1,0 +1,16 @@
+{
+  "name": "cp_backend",
+  "module": "start.js",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "convert-excel-to-json": "^1.7.0",
+    "json2xls": "^0.1.2",
+    "nodemailer": "^6.9.14"
+  }
+}

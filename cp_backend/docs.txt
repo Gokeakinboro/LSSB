@@ -1,0 +1,6 @@
+// ====== DNS Load Balancing ==========--===//
+
+A NS attr is assigned to new clients, devices etc on signup .... so they know which DNS to direct all their requests to.
+
+This can be saved in the devices localstorage for next time.
+

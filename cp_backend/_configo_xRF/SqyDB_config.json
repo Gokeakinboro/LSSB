@@ -1,0 +1,8 @@
+{
+    "api_port":"1100",
+    "db_port":"5000",
+    "media_port":"3150",
+    "video_media_port":"4150",
+    "sock_port":"7000",
+    "noti_port":"9000"
+}

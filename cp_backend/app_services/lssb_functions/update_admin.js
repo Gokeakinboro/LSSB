@@ -1,0 +1,178 @@
+
+// 
+const allowed_roles = ['xSuperLSSBxAdmin', 'xLSSBxAdmin', '$Sys9'];
+
+// const required_fields = [
+    // 'postAuthor.displayPhoto', 'postAuthor._username'];
+
+export let update_admin = async function (reqObj, model, helpers) {
+
+    // console.log(' Update Admin ------------------------0---------0--===>', reqObj.payloadData, helpers.auth$);
+
+    // @@ --- Authorization
+    if (!helpers.auth$) {
+        return { error: { msg: 'Authorization required. Kindly login!!' }, statusCode: 401, success: false };
+    }
+
+    if (typeof reqObj.auth_expires == 'number'
+        && typeof helpers.auth$ == 'object' && helpers.auth$ !== null
+        && typeof helpers.auth$.timeSinceIssued == 'number' &&
+        auth$.timeSinceIssued > reqObj.auth_expires
+
+    ) {
+
+        return { error: { msg: 'Expired Authorization. Kindly login again!!' }, statusCode: 401, success: false };
+    }
+
+
+    // @@ --- Allowed roles to update
+    if (!helpers.auth$.role || allowed_roles.indexOf(helpers.auth$.role) == -1) {
+
+        return { error: { msg: 'Unauthorized Update Request' }, statusCode: 401, success: false };
+    }
+
+    // @@ validation -- == --- ==== >>>>-->>>> 
+    // if (!reqObj.payloadData['postAuthor'] ) {
+
+    //     return { data: { msg: 'Author is Required' }, statusCode: 400, success: false };
+
+    // }
+
+    // @@ set some necessary keys
+
+    // reqObj.payloadData['$creator$'] = helpers.auth$.$uid$;
+
+    // @@ all Docs should have an extra for later fields
+    // reqObj.payloadData['$extras$'] = {};
+
+    // @@ connections for this item
+    // reqObj.payloadData['$connections$'] = {};
+
+    // @@ process dot keys in payLoad e.g _fields._sex
+    // Object.keys(reqObj.payloadData).forEach(k => {
+
+    //     // console.log('k --->  k  --->', k);
+
+    //     if (k.indexOf('.') > -1) {
+
+    //         // console.log('k --->  k  --->', k);
+    //         let a = k.split('.');
+
+    //         reqObj.payloadData[a[0]] = reqObj.payloadData[a[0]] || {};
+
+    //         reqObj.payloadData[a[0]][a[1]] = reqObj.payloadData[k];
+
+    //         delete reqObj.payloadData[k];
+
+    //         // console.log('a --->  k  --->', a);
+
+    //     }
+
+    // });
+
+    // return { data: { msg: 'Post Created' }, statusCode: 200, success: true };
+
+    // delete reqObj.payloadData.post_id;
+    // @@ password can't just be update here --===
+    delete reqObj.payloadData.password;
+    delete reqObj.payloadData['_fields.password'];
+
+    let _id = reqObj.payloadData._id;
+
+    delete reqObj.payloadData._id;
+
+    let $updateAuthorization = {};
+
+    // @@ pass
+    if (helpers.auth$.role == 'xLSSBxAdmin' || helpers.auth$.role == 'xSuperLSSBxAdmin') { // @@ -- cant add other roles
+        $updateAuthorization['pass'] = true;
+    }
+
+    else {
+
+        $updateAuthorization['check'] = { $creator: helpers.auth$.$uid$ };
+
+    }
+
+    delete reqObj.payloadData.username;
+    delete reqObj.payloadData._id;
+    delete reqObj.payloadData['_fields.username'];
+    delete reqObj.payloadData['_fields.email'];
+
+    delete reqObj.payloadData['role'];
+
+
+    if ( reqObj.payloadData._fields) {
+        delete reqObj.payloadData._fields.username
+    }
+
+    // allowed_roles.push('$owner$');
+
+    console.log( ' Updating User payLoad --- -----00---- Post  -===>', 'reqObj.payloadData', '\n ', reqObj.payloadData );
+
+    let update_admin_res = await model.reset({
+
+        $where: { _id },
+        data: reqObj.payloadData,
+        $updateAuthorization,
+        // $updateAuthorization: { isRole: 'xLSSBxAdmin'},
+        $user$: { $uid$: helpers.auth$.$uid$, role: helpers.auth$.role }
+
+    });
+
+    // _id: update_admin_res._id
+    console.log(' Updating Admin --- -----00---- Post  -===>', 'reqObj.payloadData', '\n ', update_admin_res);
+
+    // @@ -- 
+    if (!update_admin_res) {
+
+        // @@ rety until we grt a response from DB
+        // db_set_response = await model.set({ data:reqObj.payloadData});
+
+        return { success: false, statusCode: 500, error: { msg: 'Retry$' } }
+    }
+
+    if (update_admin_res && update_admin_res.msg == 'Docs not found') {
+
+        return { success: false, statusCode: 404, error: { msg: 'Document not found' } }
+    }
+
+    if (update_admin_res && update_admin_res.msg == 'DB NOT READY') {
+
+        return { success: false, statusCode: 500, error: { msg: 'SystemD not ready. Retry$' } }
+    }
+
+    if (update_admin_res && update_admin_res.msg == 'authorized') {
+
+        return { success: false, statusCode: 401, error: { msg: 'Update not Permitted for User' } }
+    }
+
+    if (update_admin_res && update_admin_res.msg !== 'OK') {
+
+        return { success: false, statusCode: 400, error: { msg: update_admin_res.msg } }
+
+    }
+
+    if (update_admin_res && update_admin_res.msg == 'OK') {
+
+        /**   
+         * @@ -- Post Set OPs
+         * @@ -- Create connections collection for this post
+         */
+
+
+        // @@ create connections collection for this Post
+        // -- should be in a GO Routine later -- 
+        // -- consider memory overheads and when to just use Queue and Workers
+        // await model.setup_resource_collection({ _id: update_admin_res._id });
+
+        return { data: { msg: 'Update Successfull' }, statusCode: 200, success: true };
+
+
+    }
+
+    return { success: false, statusCode: 500, error: { msg: 'Error Updating User. Please try again!' } }
+
+
+
+}

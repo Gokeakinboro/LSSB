@@ -1,0 +1,13 @@
+{
+    "app_server_port":"4100",
+    "db_port":"6011",
+    "media_port":"4150",
+    "video_media_port":"4170",
+    "sock_port":"7011",
+    "chat_server_port":"7020",
+    "noti_port":"9000",
+    "app_service_controller_dir": "cp_controllers",
+    "db_url": "wss://api1.lagosscholarship.org/sqyd$NODE$_/",
+    "db_url_dev": "ws://localhost:601$NODE$",
+    "mode": "dev"
+}

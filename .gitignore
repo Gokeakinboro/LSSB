@@ -1,0 +1,10 @@
+node_modules/
+*.log
+.env
+_d_data/
+_d_data_old/
+bun.lockb
+*.webp
+*.png
+*.jpg
+error.txt
