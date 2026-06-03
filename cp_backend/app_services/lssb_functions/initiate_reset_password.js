@@ -1,3 +1,4 @@
+import { sendPasswordResetMail } from "./mailer.js";
 
 // @@ check that a supplied value is not undefined
 let _und = function (value) { return typeof value == 'undefined' };
@@ -87,18 +88,7 @@ export let initiate_reset_password = async function (reqObj, model, helpers) {
                  * @@ -- Create connections collection for this post
                  */
 
-                const worker = new Worker("/var/www/LSSB_Deploy/cp_backend/app_services/Worker/LSSB_BG_Worker.js");
-
-                worker.postMessage({
-
-                    fnc: 'send_mail',
-                    data: {
-
-                        otp: OTP,
-                        email: emailOne// reqObj.payloadData['reset_email']
-
-                    }
-                });
+                await sendPasswordResetMail({ otp: OTP, email: emailOne });
 
                 return { data: { msg: `OTP sent to ${emailOne}` }, statusCode: 200, success: true };
 

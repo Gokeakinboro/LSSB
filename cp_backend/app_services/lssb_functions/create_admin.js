@@ -1,3 +1,4 @@
+import { sendAdminWelcomeMail } from "./mailer.js";
 
 const allowed_roles = ['xSuperLSSBxAdmin', 'xLSSBxAdmin', '$Sys9'];
 
@@ -243,22 +244,10 @@ export let create_admin = async function (reqObj, model, helpers) {
             * @@ -- Create connections collection for this post
             */
 
-        // const worker = new Worker("./Worker/LSSB_BG_Worker.js");
-        const worker = new Worker("/var/www/LSSB_Deploy/cp_backend/app_services/Worker/LSSB_BG_Worker.js");
-
-        worker.postMessage({
-
-            fnc: 'send_admin_welcome_mail',
-            data: {
-
-                // otp: OTP,
-                fullname: setData._fields.fullname,
-                email: setData._fields.email,
-                // link: `https://lssbadmin.vercel.app/createpassword?t=${toks}&staff_id=${db_set_response._id}`
-                // link: `https://lssbadmin.vercel.app/createpassword?t=${toks}`
-                link: `https://admin.lagosscholarship.org/createpassword?t=${toks}`
-
-            }
+        await sendAdminWelcomeMail({
+            fullname: setData._fields.fullname,
+            email: setData._fields.email,
+            link: `https://admin.lagosscholarship.org/createpassword?t=${toks}`
         });
 
 

@@ -1,3 +1,4 @@
+import { sendUserAccountMail } from "./mailer.js";
 
 // 
 const validate_uname = function (val) {
@@ -245,19 +246,10 @@ export let create_user = async function (reqObj, model, helpers) {
         // console.log('send mail now man :: --->', '23' );
         // @@ send mail ---- 
 
-        const worker = new Worker("/var/www/LSSB_Deploy/cp_backend/app_services/Worker/LSSB_BG_Worker.js");
-
-        worker.postMessage({
-
-            fnc: 'send_user_new_account_mail',
-            data: {
-
-                otp: OTP,
-                fullname: reqObj.payloadData._fields.fullname,
-                email: reqObj.payloadData._fields.email,
-
-            }
-
+        await sendUserAccountMail({
+            otp: OTP,
+            fullname: reqObj.payloadData._fields.fullname,
+            email: reqObj.payloadData._fields.email
         });
 
 
