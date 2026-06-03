@@ -26,6 +26,9 @@ const { fetch_report } = await import('../lssb_functions/fetch_report.js');
 const { initiate_reset_password } = await import('../lssb_functions/initiate_reset_password.js');
 
 const { reset_admin_password } = await import('../lssb_functions/reset_admin_password.js');
+const { create_institution } = await import('../lssb_functions/create_institution.js');
+const { fetch_institutions } = await import('../lssb_functions/fetch_institutions.js');
+const { delete_institution } = await import('../lssb_functions/delete_institution.js');
 
 const initiate_admin_reset_password = initiate_reset_password;
 
@@ -40,7 +43,10 @@ const controller_fncs = {
     fetch_admins,
     fetch_report,
     initiate_admin_reset_password,
-    reset_admin_password
+    reset_admin_password,
+    create_institution,
+    fetch_institutions,
+    delete_institution
 };
 
 // user_create_account = null;
@@ -187,6 +193,11 @@ const LSSB_admin_model = new SqyDB_Model({  // db: config._db,
 });
 
 
+const LSSB_institutions_model = new SqyDB_Model({
+    collection: 'LSSB_institutions',
+    schema: {}
+});
+
 // const cp_users_profiles_model = new SqyDB_Model({  // db: config._db,  
 //     collection: 'LSSB_applications',
 //     schema: {}
@@ -247,7 +258,7 @@ export let theController = async function (reqObj) {
 
         if (typeof controller_fncs[cloud_action] == 'function') {
 
-            let cloud_response = await controller_fncs[cloud_action](reqObj, LSSB_admin_model, { utils, Crypto, aNode, auth$ });
+            let cloud_response = await controller_fncs[cloud_action](reqObj, LSSB_admin_model, { utils, Crypto, aNode, auth$, institutions_model: LSSB_institutions_model });
 
             console.log('LSSB_admin.js 249 >>>> cloud_response --=>', cloud_response );
             return cloud_response

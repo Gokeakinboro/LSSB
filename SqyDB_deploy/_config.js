@@ -47,6 +47,7 @@ export const config = {
         'LSSB_applications': ['_fields.matric_grant_year', '_fields.matric_no', '_fields.applicant_id', '_fields.application_num', '_fields.unique_id_grant_year_code', '$creator$', '$uid$'],
         'LSSB_grants': ['$creator$', '_fields.grant_type'],
         'LSSB_notifications': ['_id'],
+        'LSSB_institutions': ['_fields.value', '_fields.name'],
         'LSSB_resources': ['_id', 'type'],
     },
 
@@ -57,7 +58,8 @@ export const config = {
         'LSSB_grants': 'GR',
         'LSSB_PINs': 'PI',
         'LSSB_notifications': 'NO',
-        '_collectives': 'CL'
+        '_collectives': 'CL',
+        'LSSB_institutions': 'IN'
     },
 
     exclude_scan: [ 'cpx_comments', 'connections', 'admin_report', 'test_node2', '_connections', "_comments", '_chats', '_notifications', '_admin_report'],
@@ -67,11 +69,11 @@ export const config = {
     },
 
     // sort_collection: ['cross_store', 'cpx_entity', 'cpx_admins', 'cpx_posts', 'cpx_users', 'cpx_comments', 'cpx_orders'],
-    sort_collection: ['LSSB_admin', 'LSSB_users', 'LSSB_applications', 'LSSB_grants', 'LSSB_PINs', 'LSSB_notifications' ],
+    sort_collection: ['LSSB_admin', 'LSSB_users', 'LSSB_applications', 'LSSB_grants', 'LSSB_PINs', 'LSSB_notifications', 'LSSB_institutions' ],
 
     // additional_collections: ['_connections', "_comments", '_chats', '_notifications', '_admin_report'],
 
-    additional_collections: ["_collectives", '_notifications', '_admin_report', 'LSSB_notifications'],
+    additional_collections: ["_collectives", '_notifications', '_admin_report', 'LSSB_notifications', 'LSSB_institutions'],
 
     // _comments ==> collectibles schools, state etc division
 
