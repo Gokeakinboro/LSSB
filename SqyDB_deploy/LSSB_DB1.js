@@ -72,8 +72,11 @@ SqyDB.db_ops.fetch_admin_report = async function (options) {
             grants_count: _CacheKeys['LSSB_grants'].length,
             applicants_count: admin_report.report.users_count,
             applications_count: _CacheKeys['LSSB_applications'].length,
-            bursary_count: 0,
-            scholarship_count: 0,
+            bursary_count: Object.values(_Cache['LSSB_applications'] || {}).filter(d => d._fields && (d._fields.grant_type||'').includes('bursary')).length,
+            scholarship_count: Object.values(_Cache['LSSB_applications'] || {}).filter(d => d._fields && (d._fields.grant_type||'').includes('scholarship')).length,
+            es_approved_count: Object.values(_Cache['LSSB_applications'] || {}).filter(d => d._fields && d._fields.Es_approval === 'Approved').length,
+            pending_es_count: Object.values(_Cache['LSSB_applications'] || {}).filter(d => d._fields && d._fields.Es_approval !== 'Approved').length,
+            total_approved: Object.values(_Cache['LSSB_applications'] || {}).filter(d => d._fields && d._fields.application_status === 'Approved').length,
             total_pending_pay: 0,
 
         }

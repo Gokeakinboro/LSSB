@@ -125,6 +125,20 @@ export let update_application = async function (reqObj, model, helpers) {
 
     // allowed_roles.push('$owner$');
 
+    // Auto-update application_status when approval fields change
+    const approvalMap = {
+        '_fields.Es_approval': { 'Approved': 'ES Approved', 'Rejected': 'ES Rejected' },
+        '_fields.Pass_approval': { 'Approved': 'Pass Approved', 'Rejected': 'Pass Rejected' },
+        '_fields.Audit_approval': { 'Approved': 'Audit Approved', 'Rejected': 'Audit Rejected' },
+        '_fields.Finance_approval': { 'Approved': 'Finance Approved', 'Rejected': 'Finance Rejected' },
+    };
+    for (const [field, statusMap] of Object.entries(approvalMap)) {
+        if (reqObj.payloadData[field] && statusMap[reqObj.payloadData[field]]) {
+            reqObj.payloadData['_fields.application_status'] = statusMap[reqObj.payloadData[field]];
+            break;
+        }
+    }
+
     let update_post_res = await model.reset({
 
         $where: { _id },
