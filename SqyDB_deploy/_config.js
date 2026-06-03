@@ -67,11 +67,11 @@ export const config = {
     },
 
     // sort_collection: ['cross_store', 'cpx_entity', 'cpx_admins', 'cpx_posts', 'cpx_users', 'cpx_comments', 'cpx_orders'],
-    sort_collection: ['LSSB_admin', 'LSSB_users', 'LSSB_applications', 'LSSB_grants', 'LSSB_PINs' ],
+    sort_collection: ['LSSB_admin', 'LSSB_users', 'LSSB_applications', 'LSSB_grants', 'LSSB_PINs', 'LSSB_notifications' ],
 
     // additional_collections: ['_connections', "_comments", '_chats', '_notifications', '_admin_report'],
 
-    additional_collections: ["_collectives", '_notifications', '_admin_report'],
+    additional_collections: ["_collectives", '_notifications', '_admin_report', 'LSSB_notifications'],
 
     // _comments ==> collectibles schools, state etc division
 

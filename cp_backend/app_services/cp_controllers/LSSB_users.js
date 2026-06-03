@@ -22,6 +22,8 @@ const { initiate_reset_password } = await import('../lssb_functions/initiate_res
 
 const { reset_password } = await import('../lssb_functions/reset_password.js');
 
+const { fetch_notifications, mark_notifications_read } = await import('../lssb_functions/fetch_notifications.js');
+
 const controller_fncs = {
 
     // create_account: user_create_account,
@@ -31,7 +33,9 @@ const controller_fncs = {
     update_user,
     fetch_users,
     reset_password,
-    initiate_reset_password
+    initiate_reset_password,
+    fetch_notifications,
+    mark_notifications_read
 };
 
 // user_create_account = null;

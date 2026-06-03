@@ -99,6 +99,84 @@ SqyDB.db_ops.fetch_admin_report = async function (options) {
 
 // };
 
+
+// @@ -- Notification DB Functions
+
+db_fncs.after_update_application = async function (updatedDoc, options) {
+    try {
+        if (!updatedDoc || !updatedDoc._fields) return;
+        const applicant_id = updatedDoc._fields.applicant_id;
+        const new_status = updatedDoc._fields.application_status || '';
+        const es_approval = updatedDoc._fields.Es_approval || '';
+        const app_num = updatedDoc._fields.application_num || updatedDoc._id || '';
+
+        if (!applicant_id || !new_status) return;
+
+        const message_map = {
+            'ES Approved': 'Your application has been approved by the Executive Secretary.',
+            'ES Rejected': 'Your application has been reviewed by the Executive Secretary. Please contact LSSB for details.',
+            'Pass Approved': 'Your application has been approved at the Passport stage.',
+            'Pass Rejected': 'Your application was not approved at the Passport stage.',
+            'Audit Approved': 'Your application has been approved by the Audit Unit.',
+            'Audit Rejected': 'Your application was not approved by the Audit Unit.',
+            'Finance Approved': 'Your application has been approved by Finance. Payment will be processed.',
+            'Finance Rejected': 'Your application was not approved by Finance.',
+            'Approved': 'Congratulations! Your application has been approved.',
+        };
+
+        const message = message_map[new_status] || `Your application status has been updated to: ${new_status}`;
+
+        if (_CacheStats['LSSB_notifications']) {
+            await SqyDB.db_ops.set({
+                collection: 'LSSB_notifications',
+                data: {
+                    user_id: applicant_id,
+                    message,
+                    status: new_status,
+                    application_num: app_num,
+                    is_read: false,
+                    created_at: Date.now(),
+                }
+            });
+        }
+    } catch(e) {
+        console.log('after_update_application notification error:', e.message);
+    }
+};
+
+SqyDB.db_ops.fetch_user_notifications = async function (options) {
+    try {
+        const user_id = options.user_id;
+        if (!user_id) return { msg: 'Missing user_id', notifications: [] };
+
+        const allNotifs = Object.values(_Cache['LSSB_notifications'] || {});
+        const userNotifs = allNotifs
+            .filter(n => n.user_id === user_id)
+            .sort((a, b) => (b.created_at || 0) - (a.created_at || 0))
+            .slice(0, 50);
+
+        return { msg: 'OK', notifications: userNotifs };
+    } catch(e) {
+        console.log('fetch_user_notifications error:', e.message);
+        return { msg: 'error', notifications: [] };
+    }
+};
+
+SqyDB.db_ops.mark_notifications_read = async function (options) {
+    try {
+        const user_id = options.user_id;
+        const allNotifs = _Cache['LSSB_notifications'] || {};
+        for (const [id, notif] of Object.entries(allNotifs)) {
+            if (notif.user_id === user_id && !notif.is_read) {
+                allNotifs[id].is_read = true;
+            }
+        }
+        return { msg: 'OK' };
+    } catch(e) {
+        return { msg: 'error' };
+    }
+};
+
 SqyDB.db_ops.set = async function (options) {
 
     try {

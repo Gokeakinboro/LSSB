@@ -144,6 +144,7 @@ export let update_application = async function (reqObj, model, helpers) {
         $where: { _id },
         data: reqObj.payloadData,
         $updateAuthorization,
+        $afterResetFnc: 'after_update_application',
         // $updateAuthorization: { isRole: 'xLSSBxAdmin'},
         $user$: { $uid$: helpers.auth$.$uid$, role: helpers.auth$.role }
 
