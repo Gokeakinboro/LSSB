@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../cp_deploy"
+		},
+		{
+			"path": "../xx"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "xx"
+	}
+}
