@@ -24,6 +24,8 @@ const { reset_password } = await import('../lssb_functions/reset_password.js');
 
 const { fetch_notifications, mark_notifications_read } = await import('../lssb_functions/fetch_notifications.js');
 
+const { fetch_institutions_public } = await import('../lssb_functions/fetch_institutions_public.js');
+
 const controller_fncs = {
 
     // create_account: user_create_account,
@@ -35,7 +37,8 @@ const controller_fncs = {
     reset_password,
     initiate_reset_password,
     fetch_notifications,
-    mark_notifications_read
+    mark_notifications_read,
+    fetch_institutions_public
 };
 
 // user_create_account = null;
@@ -188,6 +191,11 @@ const LSSB_applications_model = new SqyDB_Model({  // db: config._db,
     schema: {}
 });
 
+const LSSB_institutions_model = new SqyDB_Model({
+    collection: 'LSSB_institutions',
+    schema: {}
+});
+
 // @@ Uset Controller
 export let theController = async function (reqObj) {
 
@@ -207,7 +215,7 @@ export let theController = async function (reqObj) {
         let auth$ = null;
         let bad_true = false;
 
-        let ignoreAuth = reqObj.payloadData.cloud_action == 'initiate_reset_password' || reqObj.payloadData.cloud_action == 'reset_password';
+        let ignoreAuth = reqObj.payloadData.cloud_action == 'initiate_reset_password' || reqObj.payloadData.cloud_action == 'reset_password' || reqObj.payloadData.cloud_action == 'fetch_institutions_public';
 
         if (typeof reqObj.auth == 'string' && reqObj.auth.length > 10) {
 
@@ -247,7 +255,7 @@ export let theController = async function (reqObj) {
     
         if ( typeof controller_fncs[cloud_action] == 'function' ) {
     
-            let cloud_response = await controller_fncs[cloud_action](reqObj, LSSB_users_model, { LSSB_applications_model, utils, Crypto, aNode, auth$ });
+            let cloud_response = await controller_fncs[cloud_action](reqObj, LSSB_users_model, { LSSB_applications_model, institutions_model: LSSB_institutions_model, utils, Crypto, aNode, auth$ });
     
             // console.log('cloud_response --=>', cloud_response );
             return cloud_response
